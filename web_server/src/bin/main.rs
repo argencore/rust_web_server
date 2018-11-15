@@ -28,7 +28,7 @@ fn handle_connection(mut stream: TcpStream){
     let mut buffer = [0; 512];
 
     //read stream connection request into buffer
-    stream.read(&mut buffer).unwrap();
+    stream.read(&mut buffer).expect("failed to read buffer");
 
     let get = b"GET / HTTP/1.1\r\n";
 
@@ -36,17 +36,17 @@ fn handle_connection(mut stream: TcpStream){
     let sleep = b"GET /sleep HTTP/1.1\r\n";
 
     let (status_line,filename) = if buffer.starts_with(get){
-        ("HTTP/1.1 200 OK\r\n\r\n","../index.html")
+        ("HTTP/1.1 200 OK\r\n\r\n","./index.html")
     }else if buffer.starts_with(sleep){
         thread::sleep(Duration::from_secs(5));
-        ("HTTP/1.1 200 OK\r\n\r\n","../index.html")
+        ("HTTP/1.1 200 OK\r\n\r\n","./index.html")
     }else{
-        ("HTTP/1.1 404 NOT FOUND\r\n\r\n","../404.html")
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n","./404.html")
     };
 
-    let content = fs::read_to_string(filename).unwrap();
+    let content = fs::read_to_string(filename).expect("failed to get content");
 
     let response = format!("{}{}",status_line,content);
-    stream.write(response.as_bytes()).unwrap();
+    stream.write(response.as_bytes()).expect("failed to write stream");
     stream.flush().unwrap();
 }
