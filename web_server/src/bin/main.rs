@@ -36,12 +36,12 @@ fn handle_connection(mut stream: TcpStream){
     let sleep = b"GET /sleep HTTP/1.1\r\n";
 
     let (status_line,filename) = if buffer.starts_with(get){
-        ("HTTP/1.1 200 OK\r\n\r\n","./index.html")
+        ("HTTP/1.1 200 OK\r\n\r\n","index.html")
     }else if buffer.starts_with(sleep){
         thread::sleep(Duration::from_secs(5));
-        ("HTTP/1.1 200 OK\r\n\r\n","./index.html")
+        ("HTTP/1.1 200 OK\r\n\r\n","index.html")
     }else{
-        ("HTTP/1.1 404 NOT FOUND\r\n\r\n","./404.html")
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n","404.html")
     };
 
     let content = fs::read_to_string(filename).expect("failed to get content");
